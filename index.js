@@ -32,7 +32,10 @@ async function run() {
         const result = await perfumeCollection.find().toArray();
         res.send(result);
     })
-
+    app.get('/reviews', async(req,res)=>{
+        const result = await reviewCollection.find().toArray();
+        res.send(result);
+    })
 
 
     // Send a ping to confirm a successful connection
