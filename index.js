@@ -27,6 +27,7 @@ async function run() {
 
     const perfumeCollection = client.db("mysticDB").collection("perfumes");
     const reviewCollection = client.db("mysticDB").collection("reviews");
+    const userCollection = client.db("mysticDB").collection("users");
 
     app.get('/perfumes', async(req,res)=>{
         const result = await perfumeCollection.find().toArray();
@@ -36,8 +37,12 @@ async function run() {
         const result = await reviewCollection.find().toArray();
         res.send(result);
     })
-
-
+    // USERS------RELATED ----API
+    app.get('/users',async(req,res)=>{
+      const user = req.body;
+      const result = await userCollection.insertOne(user);
+      res.send(result);
+    })
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
