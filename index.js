@@ -27,6 +27,7 @@ async function run() {
 
     const perfumeCollection = client.db("mysticDB").collection("perfumes");
     const reviewCollection = client.db("mysticDB").collection("reviews");
+    const cartCollection = client.db("mysticDB").collection("carts");
     const userCollection = client.db("mysticDB").collection("users");
 
     app.get('/perfumes', async(req,res)=>{
@@ -37,8 +38,15 @@ async function run() {
         const result = await reviewCollection.find().toArray();
         res.send(result);
     })
+    //CARTS-----COLLECTION-----
+    app.post('/carts',async(req,res)=>{
+      const cartItem = req.body;
+      const result = await cartCollection.insertOne(cartItem);
+      res.send(result);
+    })
+
     // USERS------RELATED ----API
-    app.get('/users',async(req,res)=>{
+    app.post('/users',async(req,res)=>{
       const user = req.body;
       const result = await userCollection.insertOne(user);
       res.send(result);
