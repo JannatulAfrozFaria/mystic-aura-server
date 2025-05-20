@@ -57,13 +57,14 @@ async function run() {
     //   const result = await cartCollection.deleteOne(query);
     //   res.send(result);
     // });
-    // USERS------RELATED ----API
     app.delete('/carts/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
       const result = await cartCollection.deleteOne(query);
       res.send(result);
     })
+    
+    // USERS------RELATED ----API
     app.post('/users',async(req,res)=>{
       const user = req.body;
       const result = await userCollection.insertOne(user);
