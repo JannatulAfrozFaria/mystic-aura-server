@@ -51,23 +51,23 @@ async function run() {
     //   res.send(result);
     // });
     app.post("/carts", async (req, res) => {
-    try {
+      try {
         const cartItem = req.body;
         // If you want to force using the original _id
         const result = await cartCollection.insertOne({
-            ...cartItem,
-            _id: new ObjectId(cartItem._id) // Convert to ObjectId
+          ...cartItem,
+          _id: new ObjectId(cartItem._id), // Convert to ObjectId
         });
         res.send(result);
-    } catch (error) {
+      } catch (error) {
         if (error.code === 11000) {
-            // Handle duplicate key error
-            res.status(400).send({ error: "Item already in cart" });
+          // Handle duplicate key error
+          res.status(400).send({ error: "Item already in cart" });
         } else {
-            res.status(500).send({ error: "Server error" });
+          res.status(500).send({ error: "Server error" });
         }
-    }
-});
+      }
+    });
     app.delete("/carts/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
@@ -76,26 +76,43 @@ async function run() {
     });
 
     // USERS------RELATED ----API
-    app.get("/users",async(req,res)=>{
+    app.get("/users", async (req, res) => {
       const result = await userCollection.find().toArray();
       res.send(result);
     });
     app.post("/users", async (req, res) => {
       const user = req.body;
-      const query = {email :user.email}
+      const query = { email: user.email };
       const existingUser = await userCollection.findOne(query);
-      if(existingUser){
-        return res.send({message:'user already exists', insertedId:null})
+      if (existingUser) {
+        return res.send({ message: "user already exists", insertedId: null });
       }
       const result = await userCollection.insertOne(user);
       res.send(result);
     });
-    app.delete('/users/:id', async(req,res)=>{
+    app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
-      const query = { _id: new ObjectId(id)}
-      const result= await userCollection.deleteOne(query);
+      const query = { _id: new ObjectId(id) };
+      const result = await userCollection.deleteOne(query);
       res.send(result);
-    })
+    });
+    app.patch("/users/admin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+
+      // First check if the user is already an admin
+      const user = await userCollection.findOne(filter);
+      if (user.role === "admin") {
+        return res.send({ acknowledged: true, modifiedCount: 0 });
+      }
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log(
