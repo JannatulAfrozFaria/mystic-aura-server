@@ -37,6 +37,11 @@ async function run() {
       const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET,{expiresIn: '1h'} );
       res.send({token});
     })
+    //middlewares
+    const verifyToken = (req,res,next)=>{
+      console.log(req.headers);
+      next();
+    }
 
     app.get("/perfumes", async (req, res) => {
       const result = await perfumeCollection.find().toArray();
