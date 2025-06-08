@@ -39,7 +39,7 @@ async function run() {
     })
     //middlewares
     const verifyToken = (req,res,next)=>{
-      console.log( 'inside verify token', req.headers);
+      console.log( 'inside verify token', req.headers.authorization);
       if(!req.headers.authorization){
         return res.status(401).send({message: 'forbidden access' })
       }
